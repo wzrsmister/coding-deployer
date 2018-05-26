@@ -1,0 +1,367 @@
+<?php
+namespace app\admin\controller;
+use think\Controller;
+use think\db\Query;
+use think\Request;
+use think\Validate;
+use think\Model;
+
+abstract class CURDController extends Controller{
+
+    protected $model;
+    protected $controller;
+    protected $action;
+    protected $module;
+    protected $query;
+    protected $params = [];
+    protected $validator = '';
+
+    abstract public function model();
+
+    protected function query(Query $query = null){
+        if($query !== null){
+            $this->query = $query;  
+        }else if($this->query == null){
+            $this->query = new \CQuery();
+        }
+        return $this->query;
+    }
+
+    public function __construct(){
+        parent::__construct();
+        $this->init();
+    }
+
+    protected function init(){
+        $this->module = strtolower($this->request->module());
+        $this->controller = strtolower($this->request->controller());
+        $this->action = strtolower($this->request->action());
+    }
+
+    protected function beforeLoad($data){
+        return $data;
+    }
+
+    protected function load($data = []){
+        $params = [];
+        foreach ((array)$this->beforeLoad($data) as $name => $value) {
+            $params[$name] = $value;
+        }
+        $this->params = $this->afterLoad($params);
+        return $this->params;
+    }
+
+    protected function afterLoad($data){
+        return $data;
+    }
+
+    protected function defaultConfig($key = null, $default = []){
+        $config = [
+            'searchable'   => [],
+            'sortable'     => [],
+            'sortSetting'  => [
+                'varName'        => config('curd.sort.varName', 'sort'),
+                'multi'          => config('curd.sort.multi', true),
+                'multiDelimiter' => config('curd.sort.delimiter', ','),
+                'delimiter'      => config('curd.sort.delimiter', '.'),
+                'directionMap'   => config('curd.sort.valueMap', ['desc' => 'DESC', 'asc' => 'ASC']),
+            ], 
+            'field'        => "*",
+            'noDisplay'    => [],
+            'defaultSort'  => [$this->model()->getPk() => "DESC"],
+            'defaultParam' => [],
+            'paginate'     => [
+                'defaultPage'     => config('curd.paginate.defaultPage', 1),
+                'defaultPageSize' => config('curd.paginate.defaultPageSize', 20),
+                'pageVarName'     => config('curd.paginate.pageVarName', 'page'),
+                'pageSizeVarName' => config('curd.paginate.pageSizeVarName', 'pagesize'),
+            ],
+        ];
+        if($key === null){
+            return $config;
+        }else if(isset($config[$key])){
+            return $config[$key];
+        }else{
+            return $default;
+        }
+    }
+
+    protected function config(){
+        return [];
+    }
+
+    protected function beforeConfig($data){
+        return $data;
+    }
+
+    protected function getConfig(){
+
+        $config = $this->beforeConfig($this->defaultConfig());
+        foreach ($this->config() as $k => $v) {
+            if(isset($config[$k]) && is_array($config[$k]) && is_array($v)){
+                $config[$k] = array_merge($config[$k], $v);
+            }else{
+                $config[$k] = $v;
+            }
+        }
+        return $this->afterConfig($config);
+    }
+
+    protected function afterConfig($data){
+        return $data;
+    }
+
+    protected function beforeSearch(Query $query, $searchs){
+
+    }
+
+    protected function search($params, $searchs = []){
+        $query = $this->query();
+        $newSearchs = $this->beforeSearch($query, $searchs);
+        $searchs = $newSearchs !== null && is_array($newSearchs) ? $newSearchs : $searchs;
+        foreach ($searchs as $search) {
+            if(is_string($search)){
+                $field = trim($search, "%");
+                $options['lLike'] = substr(trim($search), 0, 1) == "%" ? true : false;
+                $options['rLike'] = substr(trim($search), -1) == "%" ? true : false;
+                $value = getValue($params, str_replace('.', '_', $field), '');
+                $query->compare($field, array_sum($options) ? "LIKE" : "EQ", $value, $options);
+            }else if(is_array($search)){
+                list($field, $op, $value) = $search + [null, null, null];
+                $options = isset($search['options']) ? $search['options'] : [];
+                if($field === null) continue;
+                if($value === null) {
+                    $value = getValue($params, str_replace('.', '_', $field), '');
+                    $value = empty($value) && isset($search['defaultValue']) ? $search['defaultValue'] : $value;
+                }
+                $query->compare($field, $op, $value, $options);
+            }else if($search instanceof \Closure){
+                $search($query, $params);
+            }
+        }
+        $this->afterSearch($query, $params);
+        return $query;
+    }
+
+    protected function afterSearch(Query $query, $params = []){
+
+    }
+
+    protected function sort(Query $query, $config = []){
+
+        $sortable = isset($config['sortable']) ? $config['sortable'] : [];
+        $defaultSort = isset($config['defaultSort']) ? $config['defaultSort'] : [];
+        $setting = isset($config['sortSetting']) ? $config['sortSetting'] : [];
+
+        $sort = trim(input($setting['varName']));
+        $allowDefault = true;
+        if(!empty($sort)){
+            $sortArr = $setting['multi'] ? explode($setting['multiDelimiter'], $sort) : [$sort];
+            foreach ($sortArr as $key => $value) {
+                $item = explode($setting['delimiter'], $value);
+                if(!isset($item[0])) continue;
+
+                $raw = false;
+                $field = $item[0];
+                $direction = '';
+                if(array_key_exists($item[0], $sortable)){
+                    $raw = true;
+                    $field = $sortable[$field];
+                }
+
+                if(!in_array($field, $sortable)) continue;
+
+                if(isset($item[1]) && isset($setting['directionMap'][$item[1]])){
+                    $direction = $setting['directionMap'][$item[1]];
+                }
+
+                if($raw){
+                    $query->orderRaw($field . ($direction ? ' ' . $direction : ''));
+                }else{
+                    $query->order($field, $direction);
+                }
+                $allowDefault = false;
+            }
+        }
+        if ($allowDefault && $defaultSort) {
+            $query->order($defaultSort);
+        }
+    }
+
+    protected function paginate($setting){
+        if($setting === false) return $setting;
+        $data['page'] = trim(input($setting['pageVarName'], $setting['defaultPage']));
+        $data['pageSize'] = trim(input($setting['pageSizeVarName'], $setting['defaultPageSize']));
+        return $data;
+    }
+
+    protected function beforeValidator(Validate $validator, $rule, $message = [], $scene = ''){
+        $validator->batch(true);
+        $validator->message($message);
+        return $rule;
+    }
+
+    protected function validator($params, $scene = ''){
+        if(!$this->validator){
+            return true;
+        }
+        $validator = $this->app->validate($this->validator);
+        $rule = $validator->mergeRule();
+        $newRule = $this->beforeValidator($validator, $rule, $validator->mergeMessage(), $scene);
+        $rule = $newRule !== null && is_array($newRule) ? $newRule : $rule;
+        if (!$validator->check($params, $rule, $scene)) {
+            responseReturn(300, '参数错误', $validator->getError());
+        }
+    }
+
+    protected function beforeIndex(Model $model, $field, Query $query){
+        $model->field($field)->where($query);
+    }
+
+    public function index(Request $request){
+        try{
+            $config = $this->getConfig();
+            $params = $this->load($request->param());
+            $this->validator($params, 'search');
+            $query = $this->search($params, $config['searchable']);
+            $this->sort($query, $config);
+
+            $model = $this->model();
+            $this->beforeIndex($model, $config['field'], $query);
+
+            if(($paginate = $this->paginate($config['paginate'])) === false){
+                $result = $model->select();
+            }else{
+                $result = $model->paginate($paginate['pageSize'], false, ['page' => $paginate['page']]);
+            }
+
+            $result->each(function($item, $key){
+                $this->formatObject($item, $key, 'list');
+            });
+            $data = [];
+            foreach ($result as $key => $item) {
+                $data[$key] = $this->handleNoDisplay(
+                    $this->formatArray($item->toArray(), $key, 'list')
+                    , $config['noDisplay']);
+            }
+            $this->afterIndex();
+            if($paginate){
+                responseReturn(200, '请求成功', $this->handleResultData([
+                    'total'     => (int)$result->total(),
+                    'page'      => (int)$result->currentPage(),
+                    'pageSize'  => (int)$result->listRows(),
+                    'pageTotal' => (int)$result->lastPage(),
+                    'list'      => (array)$data,
+                ]));
+            }else{
+                responseReturn(200, '请求成功', $this->handleResultData(['list' => $data]));
+            }
+        } catch (\Exception $e) {
+            responseError('查询失败', $e);
+        }
+    }
+
+    protected function formatObject($item, $key, $scene = ''){}
+    protected function formatArray($item, $key, $scene = ''){
+        return $item;
+    }
+    protected function handleResultData($data){
+        return $data;
+    }
+    protected function handleNoDisplay($item, $noDisplay = []){
+        foreach ($noDisplay as $field) {
+            if(isset($item[$field])){
+                unset($item[$field]);
+            }
+        }
+        return $item;
+    }
+
+    protected function lastSql(){
+        return $this->model()->getLastSql();
+    }
+
+    protected function afterIndex(){}
+
+    
+
+    protected function beforeSave(Model $model){}
+
+    protected function afterSave(Model $model){}
+
+    public function create($data = null){
+        try {
+            $data = $data === null ? input() : (array)$data;
+            $model = $this->model();
+            $this->validator($data, 'insert');
+            $model->load($data, 'insert');
+            $this->beforeSave($model);
+            $model->beforeSave('insert');
+            if($model->save()){
+                $model->afterSave('insert');
+                $this->afterSave($model);
+                responseSuccess('添加成功');
+            }else{
+                throw new \Exception();  
+            }
+        } catch (\Exception $e) {
+            responseError('添加失败', $e);
+        }
+    }
+
+    protected function beforeUpdate(Model $model){}
+
+    protected function afterUpdate(Model $model){}
+
+    public function update($id = 0, $data = null){
+        try {
+            $data = $data === null ? input() : (array)$data;
+            $model = $this->loadModel($id);
+            $this->validator($data, 'update');
+            $model->load($data, 'update');
+            $this->beforeUpdate($model);
+            $model->beforeSave('update');
+            if($model->save()){
+                $model->save();
+                $model->afterSave('update');
+                $this->afterUpdate($model);
+                responseSuccess('修改成功');
+            }else{
+                throw new \Exception();  
+            }
+        } catch (\Exception $e) {
+            responseError('修改失败', $e);
+        }
+    }
+
+    protected function beforeDelete(Model $model){}
+
+    protected function afterDelete(Model $model){}
+
+    //删除记录
+    public function delete($id = 0){
+        try {
+            $this->validator(['id' => $id], 'delete');
+            $model = $this->loadModel($id);
+            $this->beforeDelete($model);
+            if($model->delete()){
+                $this->afterDelete($model);
+                responseSuccess('删除成功');
+            }else{
+                throw new \Exception();
+            }
+        } catch (\Exception $e) {
+            responseError('删除失败', $e);
+        }
+    }
+
+    protected function loadModel($id){
+        $model = $this->model()->get($id);
+        if($model===null){
+            responseError('记录不存在');
+        }   
+        return $model;
+    }
+
+}
+
