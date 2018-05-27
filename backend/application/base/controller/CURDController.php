@@ -1,5 +1,6 @@
 <?php
-namespace app\admin\controller;
+namespace app\base\controller;
+
 use think\Controller;
 use think\db\Query;
 use think\Request;
@@ -16,12 +17,14 @@ abstract class CURDController extends Controller{
     protected $params = [];
     protected $validator = '';
 
+    use \app\base\traits\controller\BaseControllerTrait;
+
     abstract public function model();
 
     protected function query(Query $query = null){
         if($query !== null){
             $this->query = $query;  
-        }else if($this->query == null){
+        }else if($this->query === null){
             $this->query = new \CQuery();
         }
         return $this->query;
@@ -68,7 +71,7 @@ abstract class CURDController extends Controller{
             ], 
             'field'        => "*",
             'noDisplay'    => [],
-            'defaultSort'  => [$this->model()->getPk() => "DESC"],
+            'defaultSort'  => [$this->model()->getAlias().'.'.$this->model()->getPk() => "DESC"],
             'defaultParam' => [],
             'paginate'     => [
                 'defaultPage'     => config('curd.paginate.defaultPage', 1),
@@ -115,23 +118,26 @@ abstract class CURDController extends Controller{
 
     }
 
-    protected function search($params, $searchs = []){
+    protected function search(array $params, $searchable = []){
         $query = $this->query();
-        $newSearchs = $this->beforeSearch($query, $searchs);
-        $searchs = $newSearchs !== null && is_array($newSearchs) ? $newSearchs : $searchs;
-        foreach ($searchs as $search) {
+        $newSearchs = $this->beforeSearch($query, $searchable);
+        $searchable = $newSearchs !== null && is_array($newSearchs) ? $newSearchs : $searchable;
+        foreach ($searchable as $key => $search) {
             if(is_string($search)){
-                $field = trim($search, "%");
+                $field = trim($search, "% ");
+                $key   = is_int($key) ? str_replace('.', '_', $field) : $key;
                 $options['lLike'] = substr(trim($search), 0, 1) == "%" ? true : false;
                 $options['rLike'] = substr(trim($search), -1) == "%" ? true : false;
-                $value = getValue($params, str_replace('.', '_', $field), '');
+                $value = getValue($params, $key, '');
                 $query->compare($field, array_sum($options) ? "LIKE" : "EQ", $value, $options);
             }else if(is_array($search)){
                 list($field, $op, $value) = $search + [null, null, null];
-                $options = isset($search['options']) ? $search['options'] : [];
+                $key      = is_int($key) ? str_replace('.', '_', $field) : $key;
+                $options  = isset($search['options']) ? (array)$search['options'] : [];
                 if($field === null) continue;
+                if($op    === null) $op = 'EQ';
                 if($value === null) {
-                    $value = getValue($params, str_replace('.', '_', $field), '');
+                    $value = getValue($params, $key, '');
                     $value = empty($value) && isset($search['defaultValue']) ? $search['defaultValue'] : $value;
                 }
                 $query->compare($field, $op, $value, $options);
@@ -139,6 +145,7 @@ abstract class CURDController extends Controller{
                 $search($query, $params);
             }
         }
+
         $this->afterSearch($query, $params);
         return $query;
     }
@@ -214,9 +221,7 @@ abstract class CURDController extends Controller{
         }
     }
 
-    protected function beforeIndex(Model $model, $field, Query $query){
-        $model->field($field)->where($query);
-    }
+    protected function beforeIndex(Query $query){}
 
     public function index(Request $request){
         try{
@@ -226,15 +231,14 @@ abstract class CURDController extends Controller{
             $query = $this->search($params, $config['searchable']);
             $this->sort($query, $config);
 
-            $model = $this->model();
-            $this->beforeIndex($model, $config['field'], $query);
+            $model = $this->model()->field($config['field'])->where($query);
+            $this->beforeIndex($model);
 
             if(($paginate = $this->paginate($config['paginate'])) === false){
                 $result = $model->select();
             }else{
                 $result = $model->paginate($paginate['pageSize'], false, ['page' => $paginate['page']]);
             }
-
             $result->each(function($item, $key){
                 $this->formatObject($item, $key, 'list');
             });
@@ -246,16 +250,23 @@ abstract class CURDController extends Controller{
             }
             $this->afterIndex();
             if($paginate){
-                responseReturn(200, '请求成功', $this->handleResultData([
+                $res = [
                     'total'     => (int)$result->total(),
                     'page'      => (int)$result->currentPage(),
                     'pageSize'  => (int)$result->listRows(),
                     'pageTotal' => (int)$result->lastPage(),
                     'list'      => (array)$data,
-                ]));
+                ];
             }else{
-                responseReturn(200, '请求成功', $this->handleResultData(['list' => $data]));
+                $res = [
+                    'total' => count($data),
+                    'list'  => $data,
+                ];
             }
+            if(config('app_debug')){
+                $res = ['lastSql' => $this->lastSql()] + $res;
+            }
+            responseReturn(200, '请求成功', $this->handleResultData($res));
         } catch (\Exception $e) {
             responseError('查询失败', $e);
         }
@@ -283,8 +294,6 @@ abstract class CURDController extends Controller{
 
     protected function afterIndex(){}
 
-    
-
     protected function beforeSave(Model $model){}
 
     protected function afterSave(Model $model){}
@@ -296,9 +305,7 @@ abstract class CURDController extends Controller{
             $this->validator($data, 'insert');
             $model->load($data, 'insert');
             $this->beforeSave($model);
-            $model->beforeSave('insert');
             if($model->save()){
-                $model->afterSave('insert');
                 $this->afterSave($model);
                 responseSuccess('添加成功');
             }else{
@@ -320,10 +327,7 @@ abstract class CURDController extends Controller{
             $this->validator($data, 'update');
             $model->load($data, 'update');
             $this->beforeUpdate($model);
-            $model->beforeSave('update');
             if($model->save()){
-                $model->save();
-                $model->afterSave('update');
                 $this->afterUpdate($model);
                 responseSuccess('修改成功');
             }else{

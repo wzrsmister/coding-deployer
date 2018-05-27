@@ -47,7 +47,11 @@ function responseSuccess($message){
 }
 
 function responseError($message, \Exception $e = null){
-    $message = config('app_debug') && $e !== null ? $message . $e->getMessage() : $message;
+    if(config('app_debug') && $e !== null && !isAjax()){
+        throw $e;    
+    }else{
+        $message = config('app_debug') && $e !== null ? $message . $e->getMessage() : $message;
+    }
     return responseReturn(300, $message, []);
 }
 
@@ -69,6 +73,14 @@ function jsonOutput($data)
     echo $callback ? htmlentities($callback)."({$json})": $json;
     exit(0);
 }
+
+function isAjax() {  
+    if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {  
+        if('xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH']))  
+            return true;  
+    }   
+    return false;  
+}  
 
 
 

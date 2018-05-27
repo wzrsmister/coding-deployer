@@ -1,9 +1,9 @@
 <?php
-namespace app\admin\validate;
+namespace app\base\validate;
 
 use think\Validate;
 
-class CommonValidate extends Validate
+class BaseValidate extends Validate
 {
     protected $commonRule = [
         'page' =>  'number|min:1',

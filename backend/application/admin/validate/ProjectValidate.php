@@ -1,7 +1,9 @@
 <?php
 namespace app\admin\validate;
 
-class ProjectValidate extends CommonValidate
+use app\base\validate\BaseValidate;
+
+class ProjectValidate extends BaseValidate
 {
     protected $rule = [
         'name' => 'require'

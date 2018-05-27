@@ -55,7 +55,7 @@ return [
     // Builder类
     'builder'         => '',
     // Query类
-    'query'           => '\\CQuery',
+    'query'           => '\\app\\base\\core\\CQuery',
     // 是否需要断线重连
     'break_reconnect' => false,
     // 断线标识字符串

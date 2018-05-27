@@ -3,7 +3,7 @@ namespace app\admin\model;
 
 use app\base\model\Base;
 
-class Server extends Base
+class Group extends Base
 {
-    protected $table = 'servers';
+    protected $table = 'groups';
 }

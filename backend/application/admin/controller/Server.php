@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use app\admin\validate\ProjectValidate;
+use app\base\controller\CURDController;
 use think\Validate;
 use think\Model;
 use think\db\Query;
