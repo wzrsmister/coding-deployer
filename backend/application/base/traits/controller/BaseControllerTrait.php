@@ -19,11 +19,7 @@ trait BaseControllerTrait{
     }
 
     protected function load($data = []){
-        $params = [];
-        foreach ((array)$this->beforeLoad($data) as $name => $value) {
-            $params[$name] = $value;
-        }
-        return $this->afterLoad($params);
+        return $this->afterLoad($this->beforeLoad($data));
     }
 
     protected function loadModel($id){
