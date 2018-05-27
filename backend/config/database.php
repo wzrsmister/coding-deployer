@@ -15,7 +15,7 @@ return [
      // 服务器地址
     'hostname'        => 'localhost', //'119.23.209.15',
     // 数据库名
-    'database'        => 'deployer3',
+    'database'        => 'five',
     // 用户名
     'username'        => 'root',
     // 密码

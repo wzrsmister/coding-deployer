@@ -18,9 +18,9 @@ trait UpdateControllerTrait{
             $this->beforeUpdate($model);
             $model->save();
             $this->afterUpdate($model);
-            $this->responseSuccess('修改成功');
+            return $this->responseReturn(200, '修改成功', ['id' => $id]);
         } catch (\Exception $e) {
-            $this->responseError('修改失败', $e);
+            return $this->responseError('修改失败', $e);
         }
     }
 }

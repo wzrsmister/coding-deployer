@@ -67,12 +67,14 @@ function responseReturn($code, $message, $data = [])
 
 function jsonOutput($data)
 {
-    //header('Content-type: application/x-javascript'); 
-    $json  = toJson($data);
-    $callback = input("callback");
-    echo $callback ? htmlentities($callback)."({$json})": $json;
-    exit(0);
+    $callback = input(input('var_jsonp_handler', 'callback'));
+    if($callback){
+        return jsonp($data);
+    }else{
+        return json($data);
+    }
 }
+
 
 function isAjax() {  
     if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {  

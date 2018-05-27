@@ -24,22 +24,29 @@ trait CURDModelTrait{
     }
 
 
-    protected function insertable(){ return []; }
+    protected function insertAble(){ return null; }
 
-    protected function updateable(){ return []; }
+    protected function insertExcept(){ return []; }
+
+    protected function updateAble(){ return null; }
+    
+    protected function updateExcept(){ return []; }
 
     protected function beforeSave($sequence = ''){}
 
     protected function afterSave($sequence = ''){}
 
-    public function load(array $params, $sequence = ''){
+    public function load(array $params, $sequence = 'update'){
         $data = [];
-        $able = $sequence == 'insert' ? $this->insertable() : $this->updateable();
-        foreach ($able as $key => $field) {
-            if(isset($params[$field]) && $params[$field] !== null){
-                $this->setAttr($field, $params[$field]);
+        $able = $sequence == 'insert' ? $this->insertAble() : $this->updateAble();
+        $except = $sequence == 'insert' ? $this->insertExcept() : $this->updateExcept();
+
+        foreach ($params as $field => $value) {
+            if(($able === null || in_array($field, $able)) && !in_array($field, $except)){
+                $this->setAttr($field, $value);
             }
         }
+
         return $this;
     }
 

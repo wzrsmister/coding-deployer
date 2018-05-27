@@ -36,11 +36,14 @@ trait BaseControllerTrait{
 
     protected function beforeValidator(Validate $validator, $scene = ''){}
 
-    protected function valid($params, $scene = ''){
-        if(!($validator = $this->validator())){
+    protected function valid($params, $scene = '', $validator = null){
+        $validator = $validator === null ? $this->validator() : $validator;
+        if(!$validator){
             return true;
         }
-        $validator = app()->validate($validator);
+        if(!$validator instanceof Validate){
+            $validator = app()->validate($validator);
+        }
         $rule = $message = [];
         if(method_exists($validator, 'getCommonRule')){
             $rule = $validator->getCommonRule();
@@ -113,11 +116,12 @@ trait BaseControllerTrait{
 
     protected function jsonOutput($data)
     {
-        //header('Content-type: application/x-javascript'); 
-        $json  = $this->toJson($data);
-        $callback = input("callback");
-        echo $callback ? htmlentities($callback)."({$json})": $json;
-        exit(0);
+        $callback = input(input('var_jsonp_handler', 'callback'));
+        if($callback){
+            return jsonp($data);
+        }else{
+            return json($data);
+        }
     }
 
     protected function isAjax() {  

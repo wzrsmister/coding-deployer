@@ -17,12 +17,12 @@ trait DeleteControllerTrait{
             $this->beforeDelete($model);
             if($model->delete()){
                 $this->afterDelete($model);
-                $this->responseSuccess('删除成功');
+                return $this->responseSuccess('删除成功');
             }else{
                 throw new \Exception();
             }
         } catch (\Exception $e) {
-            $this->responseError('删除失败', $e);
+            return $this->responseError('删除失败', $e);
         }
     }
 }

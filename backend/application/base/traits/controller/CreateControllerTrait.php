@@ -18,12 +18,13 @@ trait CreateControllerTrait{
             $this->beforeCreate($model);
             if($model->save()){
                 $this->afterCreate($model);
-                $this->responseSuccess('添加成功');
+                // $this->responseReturn(200, '添加成功', ['id' => $model->{$model->getPk()}]);
+                return $this->responseReturn(200, '添加成功', $model);
             }else{
                 throw new \Exception();  
             }
         } catch (\Exception $e) {
-            $this->responseError('添加失败', $e);
+            return $this->responseError('添加失败', $e);
         }
     }
 

@@ -7,11 +7,11 @@ class Server extends Base
 
     protected $table = 'servers';
 
-    protected function insertable(){
+    protected function insertAble(){
         return ['name'];
     }
 
-    protected function updateable(){
+    protected function updateAble(){
         return $this->insertable();
     }
 }

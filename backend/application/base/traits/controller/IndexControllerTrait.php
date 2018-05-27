@@ -142,9 +142,9 @@ trait IndexControllerTrait{
             if(config('app_debug')){
                 $res = ['lastSql' => $this->lastSql()] + $res;
             }
-            $this->responseReturn(200, '请求成功', $this->handleResultData($res));
+            return $this->responseReturn(200, '请求成功', $this->handleResultData($res));
         } catch (\Exception $e) {
-            $this->responseError('查询失败', $e);
+            return $this->responseError('查询失败', $e);
         }
     }
 

@@ -1,17 +1,15 @@
 <?php
 namespace app\admin\validate;
 
-use think\Validate;
-
-class BaseValidate extends Validate
+class AdminValidate extends BaseValidate
 {
-    protected $commonRule = [
+     protected $rule = [
         'page' =>  'number|min:1',
         'pagesize'  =>  'number|between:1,1000',
         'id'  =>  'number',
     ];
 
-     protected $commonMessage  =   [
+     protected $message  =   [
         'id.number'       => 'id必须是数字',
         'page.number'       => 'page必须是数字',
         'page.min'          => 'page不能小于0',
@@ -25,13 +23,5 @@ class BaseValidate extends Validate
         'update'  =>  [null],
         'delete'  =>  ['id'],
     ];
-
-    public function getCommonRule(){
-        return $this->commonRule;
-    }
-
-    public function getCommonMessage(){
-        return $this->commonMessage;
-    }
 
 }

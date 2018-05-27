@@ -7,11 +7,11 @@ class Project extends Base
 
     protected $table = 'projects';
    
-    protected function insertable(){
+    protected function insertAble(){
         return ['name' , 'ip_address', 'user'];
     }
 
-    protected function updateable(){
+    protected function updateAble(){
         return $this->insertable();
     }
 

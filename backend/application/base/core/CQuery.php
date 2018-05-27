@@ -42,6 +42,10 @@ class CQuery extends Query
         return $this->compare($field, $op, $value, array_merge($options, ['allowEmpey' => false]));
     }
 
+    public function compareOr($field, $op, $value = null, $options = []){
+        return $this->compare($field, $op, $value, array_merge($options, ['logic' => 'OR']));
+    }
+
     public function compare($field, $op, $value = null, $options = []){
         $options = array_merge([
             'logic' => 'AND', 
@@ -74,6 +78,7 @@ class CQuery extends Query
                 $value=$value.'%';
             }
         }
+
 
         if(strtoupper($options['logic']) == "OR"){
             return $this->whereOr($field, $op, $value);
