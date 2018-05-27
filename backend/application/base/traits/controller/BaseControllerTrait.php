@@ -34,9 +34,7 @@ trait BaseControllerTrait{
         return $model;
     }
 
-    protected function beforeValidator(Validate $validator, $scene = ''){
-        $validator->batch(true);
-    }
+    protected function beforeValidator(Validate $validator, $scene = ''){}
 
     protected function valid($params, $scene = ''){
         if(!($validator = $this->validator())){
@@ -50,6 +48,7 @@ trait BaseControllerTrait{
         if(method_exists($validator, 'getCommonMessage')){
             $message = $validator->getCommonMessage();
         }
+        $validator->batch(true);
         $validator->rule($rule, $message);
         $this->beforeValidator($validator, $scene);
         if (!$validator->check($params, [], $scene)) {
