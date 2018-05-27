@@ -33,7 +33,7 @@ class Demo extends Base
             'noDisplay'  => ['password', 'level'],
             'searchable' => [
                 'id'=>'admin_id',
-                // 'level',
+                'level',
                 'name' => ['admin_name', 'LIKE', 'options' => ['lLike' => false]],
                 // ['level', '<>', 'defaultValue'=>2,'options' => ['logic' => 'or']]
             ],

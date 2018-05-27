@@ -47,7 +47,7 @@ function responseSuccess($message){
 }
 
 function responseError($message, \Exception $e = null){
-    if(config('app_debug') && $e !== null && !isAjax()){
+    if(config('app_debug') && $e !== null && !request()->isAjax()){
         throw $e;    
     }else{
         $message = config('app_debug') && $e !== null ? $message . $e->getMessage() : $message;
@@ -75,16 +75,6 @@ function jsonOutput($data)
     }
     exit(0);
 }
-
-
-function isAjax() {  
-    if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {  
-        if('xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH']))  
-            return true;  
-    }   
-    return false;  
-}  
-
 
 
 

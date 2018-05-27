@@ -92,7 +92,7 @@ trait BaseControllerTrait{
     }
 
     protected function responseError($message, \Exception $e = null){
-        if(config('app_debug') && $e !== null && !isAjax()){
+        if(config('app_debug') && $e !== null && !request()->isAjax()){
             throw $e;    
         }else{
             $message = config('app_debug') && $e !== null ? $message . $e->getMessage() : $message;
@@ -120,14 +120,6 @@ trait BaseControllerTrait{
         }
         exit(0);
     }
-
-    protected function isAjax() {  
-        if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {  
-            if('xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH']))  
-                return true;  
-        }   
-        return false;  
-    }  
 
     protected function lastSql(){
         return $this->model()->getLastSql();
