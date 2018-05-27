@@ -30,7 +30,7 @@ trait CURDModelTrait{
 
     protected function updateAble(){ return null; }
     
-    protected function updateExcept(){ return []; }
+    protected function updateExcept(){ return [$this->getPk()]; }
 
     protected function beforeSave($sequence = ''){}
 

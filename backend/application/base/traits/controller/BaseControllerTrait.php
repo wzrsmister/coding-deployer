@@ -29,7 +29,7 @@ trait BaseControllerTrait{
     protected function loadModel($id){
         $model = $this->model()->get($id);
         if($model===null){
-            $this->responseError('记录不存在');
+            return $this->responseError('记录不存在');
         }   
         return $model;
     }
@@ -45,7 +45,7 @@ trait BaseControllerTrait{
             $validator = app()->validate($validator);
         }
         $rule = $message = [];
-        if(method_exists($validator, 'getCommonRule')){
+        if(method_exists($validator, 'get2CommonRule')){
             $rule = $validator->getCommonRule();
         }
         if(method_exists($validator, 'getCommonMessage')){
@@ -118,10 +118,11 @@ trait BaseControllerTrait{
     {
         $callback = input(input('var_jsonp_handler', 'callback'));
         if($callback){
-            return jsonp($data);
+            jsonp($data)->send();
         }else{
-            return json($data);
+            json($data)->send();
         }
+        exit(0);
     }
 
     protected function isAjax() {  

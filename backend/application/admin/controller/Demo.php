@@ -51,6 +51,12 @@ class Demo extends Base
         $model->load($data,'insert');
     }
 
+    protected function beforeUpdate(Model $model)
+    {
+        $data = ['admin_id'=>4123,'nickname'=>'xiaoyangj'];
+        $model->load($data,'update');
+    }
+
     public function compare()
     {
         //$this->valid(input(), 'insert');die;

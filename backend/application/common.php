@@ -69,10 +69,11 @@ function jsonOutput($data)
 {
     $callback = input(input('var_jsonp_handler', 'callback'));
     if($callback){
-        return jsonp($data);
+        jsonp($data)->send();
     }else{
-        return json($data);
+        json($data)->send();
     }
+    exit(0);
 }
 
 

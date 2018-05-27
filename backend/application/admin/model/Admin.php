@@ -20,5 +20,4 @@ class Admin extends Base
             $this->createtime = $this->createtime ? : time();
         }
     }
-
 }

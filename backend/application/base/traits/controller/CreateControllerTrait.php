@@ -18,8 +18,7 @@ trait CreateControllerTrait{
             $this->beforeCreate($model);
             if($model->save()){
                 $this->afterCreate($model);
-                // $this->responseReturn(200, '添加成功', ['id' => $model->{$model->getPk()}]);
-                return $this->responseReturn(200, '添加成功', $model);
+                $this->responseReturn(200, '添加成功', ['id' => $model->{$model->getPk()}]);
             }else{
                 throw new \Exception();  
             }

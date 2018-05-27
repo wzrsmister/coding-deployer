@@ -17,7 +17,7 @@ trait DeleteControllerTrait{
             $this->beforeDelete($model);
             if($model->delete()){
                 $this->afterDelete($model);
-                return $this->responseSuccess('删除成功');
+                return $this->responseReturn(200, '删除成功', ['id' => $id]);
             }else{
                 throw new \Exception();
             }
