@@ -1,9 +1,11 @@
 <?php
-namespace app\base\model;
-use think\Model;
+namespace app\base\traits\model;
 
-class Base extends Model
-{
+trait CURDModelTrait{
+
+    public function getQuery(){
+        return '\app\base\core\CQuery';
+    }
 
     public static function init()
     {
@@ -39,6 +41,17 @@ class Base extends Model
             }
         }
         return $this;
+    }
+
+    public function db($useBaseQuery = true)
+    {
+        if($this->queryInstance === null){
+            if($this->query === null){
+                $this->query = $this->getQuery();
+            }
+            $this->queryInstance = parent::db($useBaseQuery);
+        }
+        return $this->queryInstance;
     }
 
 }

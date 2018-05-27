@@ -17,8 +17,6 @@ abstract class CURDController extends Controller{
     protected $params = [];
     protected $validator = '';
 
-    use \app\base\traits\controller\BaseControllerTrait;
-
     abstract public function model();
 
     protected function query(Query $query = null){

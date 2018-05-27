@@ -7,13 +7,19 @@ use think\Validate;
 use think\Model;
 use think\db\Query;
 
-class Server extends CURDController
+class Server
 {
+ 
+    use \app\base\traits\controller\ConfigControllerTrait;
+    use \app\base\traits\controller\BaseControllerTrait;
+    use \app\base\traits\controller\IndexControllerTrait;
 
-    protected $validator = 'app\admin\validate\CommonValidate';
-
-    public function model(){
+    protected function model(){
         return model('server');
+    }
+
+    protected function validator(){
+        return 'app\base\validate\BaseValidate';
     }
 
     protected function config(){

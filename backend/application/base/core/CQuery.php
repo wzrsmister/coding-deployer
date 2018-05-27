@@ -5,18 +5,6 @@ use think\db\Query;
 
 class CQuery extends Query
 {
-    /*public function addCondition($condition, $bindParam = [], $logic = "AND")
-    {
-        if (!isset($this->options['where'][$logic])) {
-            $this->options['where'][$logic] = [];
-        }
-        $this->options['where'][$logic][] = ['exp', $this->raw($condition)];
-        if (is_array($bindParam)) {
-            // 参数绑定
-            $this->bind($bindParam);
-        }
-        return $this;
-    }*/
 
     public function like($field, $value = null, $options = []){
         return $this->compare($field, "LIKE", $value, $options);

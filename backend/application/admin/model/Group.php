@@ -1,9 +1,9 @@
 <?php
 namespace app\admin\model;
 
-use app\base\model\Base;
-
 class Group extends Base
 {
+    use \app\base\traits\model\CURDModelTrait;
+    
     protected $table = 'groups';
 }

@@ -1,5 +1,5 @@
 <?php
-namespace app\base\validate;
+namespace app\admin\validate;
 
 use think\Validate;
 
@@ -26,12 +26,12 @@ class BaseValidate extends Validate
         'delete'  =>  ['id'],
     ];
 
-    public function mergeRule(){
-        return array_merge((array)$this->commonRule, (array)$this->rule);
+    public function getCommonRule(){
+        return $this->commonRule;
     }
 
-    public function mergeMessage(){
-        return array_merge((array)$this->commonMessage, (array)$this->message);
+    public function getCommonMessage(){
+        return $this->commonMessage;
     }
 
 }

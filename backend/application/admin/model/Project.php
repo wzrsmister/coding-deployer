@@ -1,10 +1,10 @@
 <?php
 namespace app\admin\model;
 
-use app\base\model\Base;
-
 class Project extends Base
 {
+    use \app\base\traits\model\CURDModelTrait;
+
     protected $table = 'projects';
    
     protected function insertable(){

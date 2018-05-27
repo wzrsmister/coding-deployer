@@ -7,16 +7,20 @@ use think\Validate;
 use think\Model;
 use think\db\Query;
 
-class Project extends CURDController
+class Project
 {
 
-    protected $validator = 'app\admin\validate\ProjectValidate';
+    use \app\base\traits\controller\CURDControllerTrait;
 
-    public function model(){
+    protected function model(){
         //return model('project')->with('group');
         //return model('project')->alias('p')->join('groups g', 'p.group_id = g.id');
         //return model('project')->alias('p');
         return model('project');
+    }
+
+    protected function validator(){
+        return 'app\admin\validate\ProjectValidate';
     }
 
     protected function config(){

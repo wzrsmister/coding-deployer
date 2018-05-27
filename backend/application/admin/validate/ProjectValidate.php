@@ -1,8 +1,6 @@
 <?php
 namespace app\admin\validate;
 
-use app\base\validate\BaseValidate;
-
 class ProjectValidate extends BaseValidate
 {
     protected $rule = [
