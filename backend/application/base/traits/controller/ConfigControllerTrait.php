@@ -53,7 +53,6 @@ trait ConfigControllerTrait{
     }
 
     protected function getConfig(){
-
         $config = $this->beforeConfig($this->defaultConfig());
         foreach ($this->config() as $k => $v) {
             if(isset($config[$k]) && is_array($config[$k]) && is_array($v)){

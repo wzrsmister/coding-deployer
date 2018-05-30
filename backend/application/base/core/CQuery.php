@@ -6,6 +6,8 @@ use think\db\Query;
 class CQuery extends Query
 {
 
+    protected static $readMaster = [];
+
     public function like($field, $value = null, $options = []){
         return $this->compare($field, "LIKE", $value, $options);
     }

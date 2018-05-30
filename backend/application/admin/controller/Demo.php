@@ -7,11 +7,7 @@ use app\base\traits\controller\CURDControllerTrait;
 class Demo extends Base
 {
     use CURDControllerTrait{
-        CURDControllerTrait::index as list;
-    }
-
-    public function index(){
-        return '请访问list方法';
+        CURDControllerTrait::index as lists;
     }
 
     protected function model()

@@ -3,7 +3,7 @@ namespace app\base\traits\model;
 
 trait CURDModelTrait{
 
-    public function getQuery(){
+    public function getCQuery(){
         return '\app\base\core\CQuery';
     }
 
@@ -53,9 +53,9 @@ trait CURDModelTrait{
     public function db($useBaseQuery = true)
     {
         if($this->queryInstance === null){
-            if($this->query === null){
-                $this->query = $this->getQuery();
-            }
+            //if($this->query === null){
+                $this->query = $this->getCQuery();
+            //}
             $this->queryInstance = parent::db($useBaseQuery);
         }
         return $this->queryInstance;
