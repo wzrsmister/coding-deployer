@@ -9,7 +9,7 @@
 // | Author: 流年 <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-// 应用公共文件
+// 应用公共文件 
 
 //从一个数组得获得某下标的值，可以是多维数组，支持点语法
 function getValue($array, $key, $default = null, $multi = true){
@@ -34,3 +34,60 @@ function getValue($array, $key, $default = null, $multi = true){
         return $default;
     }
 }
+
+// 将数组转化成json格式
+function toJson(array $data)
+{
+    return json_encode($data);
+}
+
+
+function responseSuccess($message){
+    return responseReturn(200, $message, []);
+}
+
+function responseError($message, \Exception $e = null){
+    if(config('app_debug') && $e !== null && !request()->isAjax()){
+        throw $e;    
+    }else{
+        $message = config('app_debug') && $e !== null ? $message . $e->getMessage() : $message;
+    }
+    return responseReturn(300, $message, []);
+}
+
+function responseReturn($code, $message, $data = [])
+{
+    return jsonOutput([
+        'code'      => $code, 
+        'message'   => $message, 
+        'timestamp' => time(),
+        'data'      => $data,
+    ]);
+}
+
+function jsonOutput($data)
+{
+    $callback = input(input('var_jsonp_handler', 'callback'));
+    if($callback){
+        jsonp($data)->send();
+    }else{
+        json($data)->send();
+    }
+    exit(0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

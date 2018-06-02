@@ -43,7 +43,7 @@ export const constantRouterMap = [
       meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
     }]
   },
-  {
+  /*{
     path: '/documentation',
     component: Layout,
     redirect: '/documentation/index',
@@ -53,7 +53,7 @@ export const constantRouterMap = [
       name: 'documentation',
       meta: { title: 'documentation', icon: 'documentation', noCache: true }
     }]
-  }
+  }*/
 ]
 
 export default new Router({
@@ -64,12 +64,17 @@ export default new Router({
 
 export const asyncRouterMap = [
   {
-    path: '/zip',
+    path: '/user',
     component: Layout,
-    redirect: '/zip/download',
+    redirect: '/user/index',
     alwaysShow: true,
-    meta: { title: 'zip', icon: 'zip' },
-    children: [{ path: 'download', component: _import('zip/index'), name: 'exportZip', meta: { title: 'exportZip' }}]
+    meta: { title: '用户', icon: 'zip' },
+    children: [{ 
+      path: 'index', 
+      component: _import('deployer/user/index'), 
+      name: '用户列表', 
+      meta: { title: '用户列表' }
+    }]
   },
   {
     path: '/permission',

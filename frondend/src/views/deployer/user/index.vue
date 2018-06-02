@@ -1,0 +1,86 @@
+<template>
+  <div class="app-container">
+    <c-data-grid 
+      :dataLoadHandler="dataLoadHandler" 
+      :searchQueryHandler="searchQueryHandler" 
+      :formatRowData="formatRowData" 
+      :columns="columns"
+      :attributes="attributes"
+      :paginations="paginations"
+      :events="events"
+    ></c-data-grid>
+  </div>
+</template>
+
+
+<script>
+import { createElement } from 'vue'
+import cDataGrid from '../component/cDataGrid'
+import { getList } from '@/api/user'
+import { parseTime } from '@/utils/index'
+export default {
+  components: { cDataGrid },
+  data() {
+    return {
+      attributes: {},
+      paginations: {},
+      dataLoadHandler: getList,
+      searchQueryHandler: this.getSearchQuery,
+      formatRowData: this.showRowData,
+      events: {
+          'cell-click': () => console.info('cell-click'),
+          //'sort-change': () => console.info('sort-change'),
+      },
+      statusArr: {
+        '1' : { name: "正常", label: 'info' },
+        '0' : { name: "未启用", label: '' },
+        '-1': { name: "禁用", label: '' }
+      },
+      columns: [
+        {prop: '', label: '', type: 'selection'},
+        {prop: 'id', label: 'ID', sortable: 'custom'},
+        {prop: 'create_id', label: '创建人ID', value: '<div>123456</div>'},
+        {prop: 'name', label: '名字', sortable: true},
+        {prop: 'email', label: '邮箱', value: (value, index, row) => {
+          //console.info(this, value, index, row)
+          return parseTime(value)
+        }},
+        {prop: 'email', label: '邮箱2', render: (value, index, row) => {
+            return `<div>${index}.${value}</div>`
+        }},
+        {prop: 'status', label: '状态', template: `status: {{$value}}, index: {{$index}}`},
+        {prop: 'created_at', label: '创建时间', template: '123{{$row.created_at}}'},
+        {prop: 'login_at', label: '最后登陆'},
+        {prop: 'updated_at', label: '最后更新'},
+        {prop: 'deleted_at', label: '删除时间'},
+        {prop: 'remark', label: '备注'},
+        {prop: 'hander', label: '操作', template: `<a href="/data/web">查看</a>`}
+      ]
+    }
+  },
+  methods: {
+    getSearchQuery(query){
+      return Object.assign(query, {
+          sex: 'sex',
+          email: 'email',
+      })
+    },
+    getStatus(key){
+      if(this.statusArr.hasOwnProperty(key)){
+        return this.statusArr[key]
+      }else{
+        return {}
+      }
+    },
+    showRowData(data){
+      // var status = this.getStatus(data.status)
+      // data.status = status.name
+      // data.created_at = parseTime(data.created_at)
+      // data.login_at = parseTime(data.login_at)
+      // data.deleted_at = parseTime(data.deleted_at)
+      // data.hander = '<a>查看</a>'
+      return data
+    }
+  }
+}
+</script>

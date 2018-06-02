@@ -15,6 +15,13 @@ Route::get('think', function () {
 
 Route::get('hello/:name', 'index/hello');
 
+Route::group('deployer', function(){
+    Route::rule('/:controller/:action', 'deployer/:controllerController/:actionAction');
+    /*Route::get(':controller/:id', 'blog/read');
+    Route::post(':controller/:id', 'blog/update');
+    Route::delete(':controller/:id', 'blog/delete');*/
+});
+
 return [
     
 ];

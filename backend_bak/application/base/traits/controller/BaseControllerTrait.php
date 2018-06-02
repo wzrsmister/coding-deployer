@@ -102,8 +102,6 @@ trait BaseControllerTrait{
 
     protected function responseReturn($code, $message, $data = [])
     {
-        header('Access-Control-Allow-Origin: *');
-        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, x-token");
         return $this->jsonOutput([
             'code'      => $code, 
             'message'   => $message, 
