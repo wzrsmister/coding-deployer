@@ -6,8 +6,18 @@
   v-bind="attributes"
   v-on="events"
 >
-  <el-table-column v-for="(item,key) in columns" v-bind="item">
-    <template scope="scope">
+  <el-table-column 
+    v-if="item.type"
+    v-for="(item,key) in columns" v-bind="item" :key="key"
+   >
+  </el-table-column>
+
+
+  <el-table-column 
+    v-if="!item.type"
+    v-for="(item,key) in columns" v-bind="item" :key="key"
+   >
+    <template slot-scope="scope">
         <div v-if="item.value" 
             v-text="typeof item.value == 'function' ? 
             item.value(scope.row[item.prop], scope.$index, scope.row) : item.value"
@@ -34,9 +44,8 @@
             :$column="scope.column"
         ></component>
         <div v-else-if="item.html" v-html="scope.row[item.prop]"></div>
-        <div v-else v-text="scope.row[item.prop]"></div>
+        <div v-else-if="item.prop" v-text="scope.row[item.prop]"></div>
     </template>
-  </el-table-column>
   </el-table-column>
  </el-table>
 </template>

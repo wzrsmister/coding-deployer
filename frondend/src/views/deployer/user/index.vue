@@ -22,7 +22,10 @@ export default {
   components: { cDataGrid },
   data() {
     return {
-      attributes: {},
+      attributes: {
+          style: "width: 100%",
+          height: "250",
+      },
       paginations: {},
       dataLoadHandler: getList,
       searchQueryHandler: this.getSearchQuery,
@@ -37,8 +40,10 @@ export default {
         '-1': { name: "禁用", label: '' }
       },
       columns: [
-        {prop: '', label: '', type: 'selection'},
-        {prop: 'id', label: 'ID', sortable: 'custom'},
+        {type: 'selection'},
+        {type: 'expand'},
+        {type: 'index'},
+        {prop: 'id', label: 'ID', sortable: 'custom', fixed: true},
         {prop: 'create_id', label: '创建人ID', value: '<div>123456</div>'},
         {prop: 'name', label: '名字', sortable: true},
         {prop: 'email', label: '邮箱', value: (value, index, row) => {
@@ -54,7 +59,7 @@ export default {
         {prop: 'updated_at', label: '最后更新'},
         {prop: 'deleted_at', label: '删除时间'},
         {prop: 'remark', label: '备注'},
-        {prop: 'hander', label: '操作', template: `<a href="/data/web">查看</a>`}
+        {prop: 'hander', label: '操作', fixed: "right", template: `<a href="/data/web">查看</a>`}
       ]
     }
   },
