@@ -37,6 +37,7 @@ export default {
       attributes: {
           style: "width: 100%",
           height: "250",
+          //setting: {prop: "hander"},
       },
       paginations: {},
       dataLoadHandler: getList,

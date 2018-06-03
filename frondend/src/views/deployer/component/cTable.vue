@@ -1,4 +1,16 @@
 <template>
+<div>
+<el-popover
+  placement="right"
+  ref="settingPopover"
+  width="400"
+  trigger="click">
+  <el-table :data="tableData">
+    <el-table-column width="150" property="id" label="日期"></el-table-column>
+    <el-table-column width="100" property="name" label="姓名"></el-table-column>
+  </el-table>
+</el-popover>
+<el-button v-popover:settingPopover>focus 激活</el-button>
 <el-table 
   :data="tableData" 
   v-loading.body="listLoading" 
@@ -49,6 +61,7 @@
   </el-table-column>
 </slot>
  </el-table>
+</div>
 </template>
 
 <script>
@@ -63,7 +76,17 @@ export default{
     columns: {}
  },
  created(){
+    const setting = this.$props.attributes.hasOwnProperty("setting") ? this.$props.attributes.setting : false;
     this.$props.columns.forEach((column)=>{
+        if(setting && setting.prop == column.prop){
+            let setting = []
+            this.$props.columns.forEach(item => {
+                if(item.prop) setting.push({text: item.label || item.prop, value: item.prop})
+            })
+            column.renderHeader = this.renderSettingHeader
+            column.setting = setting
+            this.$props.columns[4].filters = setting
+        }
         if(column.hasOwnProperty('component')){
             this.$options.components['__component_' + column.prop + '__'] = column.component 
         }else if(column.hasOwnProperty('template')){
@@ -85,7 +108,40 @@ export default{
     }
  },
  methods: {
-
+    renderSettingHeader(createElement, { column, _self }){
+        console.info(this.$refs)
+        return [
+            column.label,
+            createElement('span', 
+                {
+                    'class': 'el-table__column-setting-trigger',
+                }, 
+                [
+                    createElement('i', {
+                        'class': 'el-icon-setting',
+                        'props': {
+                            'popover': this.$refs.settingPopover,
+                            'v-popover': this.$refs.settingPopover
+                        },
+                        directives: [
+                            {
+                                'v-popover': this.$refs.settingPopover
+                            }
+                        ]
+                    }),
+                    /*createElement('el-popover', {
+                        props: {
+                            placement: 'top-start', 
+                            title: '标题', 
+                            width: '200', 
+                            trigger: 'click', 
+                            content: '这是一段内容,这是一段内容,这是一段内容,这是一段内容。'}}, [
+                            h('i', {slot: 'reference', class: 'el-icon-question', style: 'color:gray;font-size:16px;margin-left:10px;'}, '')
+                        ])*/
+                ]
+            )
+        ]
+    }
  }
 }
 </script>
