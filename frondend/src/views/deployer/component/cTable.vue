@@ -6,15 +6,15 @@
   v-bind="attributes"
   v-on="events"
 >
+<slot name="table-body">
   <el-table-column 
-    v-if="item.type"
+    v-if="item.type == 'selection'"
     v-for="(item,key) in columns" v-bind="item" :key="key"
    >
   </el-table-column>
 
-
   <el-table-column 
-    v-if="!item.type"
+    v-if="item.type != 'selection'"
     v-for="(item,key) in columns" v-bind="item" :key="key"
    >
     <template slot-scope="scope">
@@ -47,6 +47,7 @@
         <div v-else-if="item.prop" v-text="scope.row[item.prop]"></div>
     </template>
   </el-table-column>
+</slot>
  </el-table>
 </template>
 

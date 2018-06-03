@@ -8,7 +8,19 @@
       :attributes="attributes"
       :paginations="paginations"
       :events="events"
-    ></c-data-grid>
+    >
+        <!-- <template slot="table-body">
+          <el-table-column 
+              prop='id'
+              label='主键'
+          >
+            <template slot-scope="{row}">{{row.id}}</template>
+          </el-table-column>
+          <el-table-column >
+            <template slot-scope="{}">IDDDDDDDDDD</template>
+          </el-table-column>
+        </template> -->
+    </c-data-grid>
   </div>
 </template>
 
@@ -31,7 +43,9 @@ export default {
       searchQueryHandler: this.getSearchQuery,
       formatRowData: this.showRowData,
       events: {
-          'cell-click': () => console.info('cell-click'),
+          'cell-click': (count) => console.info('cell-click', count),
+          'cell-click.once': () => console.info('cell-click.once'),
+          'cell-dblclick': () => console.info('cell-dblclick'),
           //'sort-change': () => console.info('sort-change'),
       },
       statusArr: {

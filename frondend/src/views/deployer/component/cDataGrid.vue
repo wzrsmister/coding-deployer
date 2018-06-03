@@ -6,7 +6,10 @@
       :columns="columns" 
       :listLoading="listLoading"
       :events="mEvents"
-    >
+      >
+        <template slot="table-body">
+            <slot name="table-body"></slot>
+        </template>
     </c-table>
     <c-pagination 
       v-bind="mPaginations" 
