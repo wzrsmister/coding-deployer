@@ -95,7 +95,7 @@ export default {
                 this.$nextTick(() => {
                     this.setSort()
                 })
-            }).then(() => {
+            }).catch(() => {
                 this.listLoading = false
                 this.$emit("fetch-data-end", false)
             })

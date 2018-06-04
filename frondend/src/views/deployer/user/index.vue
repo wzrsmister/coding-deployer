@@ -65,9 +65,9 @@ export default {
           //console.info(this, value, index, row)
           return parseTime(value)
         }},
-        {prop: 'email', label: '邮箱2', render: (value, index, row) => {
+        /*{prop: 'email', label: '邮箱2', render: (value, index, row) => {
             return `<div>${index}.${value}</div>`
-        }},
+        }},*/
         {prop: 'status', label: '状态', template: `status: {{$value}}, index: {{$index}}`},
         {prop: 'created_at', label: '创建时间', template: '123{{$row.created_at}}'},
         {prop: 'login_at', label: '最后登陆'},

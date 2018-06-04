@@ -1,16 +1,22 @@
 <template>
 <div>
-<el-popover
-  placement="right"
-  ref="settingPopover"
-  width="400"
-  trigger="click">
-  <el-table :data="tableData">
-    <el-table-column width="150" property="id" label="日期"></el-table-column>
-    <el-table-column width="100" property="name" label="姓名"></el-table-column>
-  </el-table>
-</el-popover>
-<el-button v-popover:settingPopover>focus 激活</el-button>
+    <div class="pull-right">
+        <el-popover
+          placement="bottom"
+          ref="settingPopover"
+          width="50"
+          trigger="click">
+          <div class="dndList-list" :style="{width:50}">
+            <el-checkbox-group v-model="settings">
+                <draggable :list="settings" class="dragArea" :options="{group:'article'}">
+                  <el-checkbox v-show="column.prop" :label="column.label" name="setting" v-for="column in settings" :checked="true" :key="'setting-'+column.prop" :style="{margin: '8px 0', display: 'block'}"></el-checkbox>
+                </draggable>
+                <button slot="footer" >重置</button>
+            </el-checkbox-group>
+          </div>
+        </el-popover>
+        <el-button v-popover:settingPopover>focus 激活</el-button>
+    </div>
 <el-table 
   :data="tableData" 
   v-loading.body="listLoading" 
@@ -65,27 +71,35 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable'
 export default{
  name: 'cTable',
- components: {},
+ components: { draggable },
  props:{
     tableData: {}, 
     listLoading: {}, 
     attributes: {},
     events: {},
-    columns: {}
+    columns: {
+        default: []
+    }
+ },
+ data(){
+    return {
+        
+    }
  },
  created(){
     const setting = this.$props.attributes.hasOwnProperty("setting") ? this.$props.attributes.setting : false;
     this.$props.columns.forEach((column)=>{
         if(setting && setting.prop == column.prop){
-            let setting = []
+            /*let setting = []
             this.$props.columns.forEach(item => {
                 if(item.prop) setting.push({text: item.label || item.prop, value: item.prop})
             })
             column.renderHeader = this.renderSettingHeader
             column.setting = setting
-            this.$props.columns[4].filters = setting
+            this.$props.columns[4].filters = setting*/
         }
         if(column.hasOwnProperty('component')){
             this.$options.components['__component_' + column.prop + '__'] = column.component 
@@ -107,9 +121,21 @@ export default{
     
     }
  },
+ computed: {
+    settings: {
+      get() {
+        return this.columns.filter(v => {
+            return v
+        })
+      },
+      set(value) {
+        console.info(value)
+        this.$store.commit(this.$props.columns, value)
+      }
+    }
+  },
  methods: {
     renderSettingHeader(createElement, { column, _self }){
-        console.info(this.$refs)
         return [
             column.label,
             createElement('span', 
@@ -118,16 +144,17 @@ export default{
                 }, 
                 [
                     createElement('i', {
-                        'class': 'el-icon-setting',
+                        /*'class': 'el-icon-setting',
                         'props': {
                             'popover': this.$refs.settingPopover,
                             'v-popover': this.$refs.settingPopover
                         },
+                        popover: this.$refs.settingPopover,
                         directives: [
                             {
                                 'v-popover': this.$refs.settingPopover
                             }
-                        ]
+                        ]*/
                     }),
                     /*createElement('el-popover', {
                         props: {
