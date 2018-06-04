@@ -7,15 +7,13 @@
           width="50"
           trigger="click">
           <div class="dndList-list" :style="{width:50}">
-            <el-checkbox-group v-model="settings">
-                <draggable :list="settings" class="dragArea" :options="{group:'article'}">
-                  <el-checkbox v-show="column.prop" :label="column.label" name="setting" v-for="column in settings" :checked="true" :key="'setting-'+column.prop" :style="{margin: '8px 0', display: 'block'}"></el-checkbox>
+                <draggable :list="columns" class="dragArea" :options="{group:'setting'}" @start="dragging=true" @end="dragging=false">
+                  <el-checkbox v-show="column.prop" :label="column.label" name="setting" v-for="(column, key) in columnsList" :checked="!column.noDisplay" :key="'setting-'+key" :style="{margin: '8px 0', display: 'block'}" @change="isDisplay(key, $event)"></el-checkbox>
                 </draggable>
                 <button slot="footer" >重置</button>
-            </el-checkbox-group>
           </div>
         </el-popover>
-        <el-button v-popover:settingPopover>focus 激活</el-button>
+        <el-button v-popover:settingPopover>设置</el-button>
     </div>
 <el-table 
   :data="tableData" 
@@ -27,13 +25,13 @@
 <slot name="table-body">
   <el-table-column 
     v-if="item.type == 'selection'"
-    v-for="(item,key) in columns" v-bind="item" :key="key"
+    v-for="(item,key) in columnsList" v-bind="item" :key="key"
    >
   </el-table-column>
 
   <el-table-column 
-    v-if="item.type != 'selection'"
-    v-for="(item,key) in columns" v-bind="item" :key="key"
+    v-if="item.type != 'selection' && !item.noDisplay"
+    v-for="(item,key) in columnsList" v-bind="item" :key="key"
    >
     <template slot-scope="scope">
         <div v-if="item.value" 
@@ -71,7 +69,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import draggable from 'vuedraggable'
+
 export default{
  name: 'cTable',
  components: { draggable },
@@ -86,7 +86,7 @@ export default{
  },
  data(){
     return {
-        
+        dragging: false
     }
  },
  created(){
@@ -116,26 +116,43 @@ export default{
 
     })
  },
- data(){
-    return{
-    
-    }
- },
  computed: {
+    columnsList: {
+        get(){
+            return this.columns.filter(v => {
+                v.noDisplay = v.noDisplay ? v.noDisplay : false;
+                return v
+            })
+        },
+        set(value){
+
+        }
+    },
     settings: {
-      get() {
+      get(){
         return this.columns.filter(v => {
             return v
         })
       },
       set(value) {
         console.info(value)
-        this.$store.commit(this.$props.columns, value)
+         this.$store.commit(this.$props.columns, value)
       }
     }
   },
+  watch:{
+    columns: function(now, old){
+
+    }
+  },
  methods: {
+    isDisplay (key, $event){
+        let column = this.columns[key]
+        column.noDisplay = !$event;
+        Vue.set(this.columns, key, column)
+    },
     renderSettingHeader(createElement, { column, _self }){
+        console.info(this.$refs)
         return [
             column.label,
             createElement('span', 
@@ -144,7 +161,7 @@ export default{
                 }, 
                 [
                     createElement('i', {
-                        /*'class': 'el-icon-setting',
+                        'class': 'el-icon-setting',
                         'props': {
                             'popover': this.$refs.settingPopover,
                             'v-popover': this.$refs.settingPopover
@@ -154,7 +171,7 @@ export default{
                             {
                                 'v-popover': this.$refs.settingPopover
                             }
-                        ]*/
+                        ]
                     }),
                     /*createElement('el-popover', {
                         props: {

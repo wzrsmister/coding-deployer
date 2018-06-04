@@ -92,9 +92,9 @@ export default {
                 this.mPaginations.total = data.data.total;
                 this.listLoading = false
                 this.$emit("fetch-data-end", true)
-                this.$nextTick(() => {
+                /*this.$nextTick(() => {
                     this.setSort()
-                })
+                })*/
             }).catch(() => {
                 this.listLoading = false
                 this.$emit("fetch-data-end", false)

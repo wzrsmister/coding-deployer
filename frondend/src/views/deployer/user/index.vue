@@ -61,7 +61,7 @@ export default {
         {prop: 'id', label: 'ID', sortable: 'custom', fixed: true},
         {prop: 'create_id', label: '创建人ID', value: '<div>123456</div>'},
         {prop: 'name', label: '名字', sortable: true},
-        {prop: 'email', label: '邮箱', value: (value, index, row) => {
+        {prop: 'email', label: '邮箱', noDisplay: true, value: (value, index, row) => {
           //console.info(this, value, index, row)
           return parseTime(value)
         }},
