@@ -28,6 +28,7 @@
     v-bind="column" 
     :key="key" 
     :index="key"
+    v-on="$listeners"
     >
       <template v-if="typeof $scopedSlots[column.prop] !== 'undefined'">
         <slot

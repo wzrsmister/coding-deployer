@@ -1,6 +1,6 @@
 <template>
     <el-table-column v-if="noTemplate" v-bind="$attrs"></el-table-column>
-    <el-table-column v-else v-bind="$attrs">
+    <el-table-column v-else v-bind="$attrs" v-on="$listeners">
         <template slot-scope="scope">
             <template v-if="$attrs.value">
               {{ 
@@ -9,9 +9,12 @@
                 $attrs.value 
               }}
             </template>
-            <div v-else-if="$attrs.render">
-              {{renderTemplate($attrs.render(scope.row[$attrs.prop], scope.$index, scope.row))}}
-            </div>
+            <component 
+              v-else-if="$attrs.render" 
+              :is="renderTemplate($attrs.render(scope.row[$attrs.prop], scope.$index, scope.row))">
+              v-on="$listeners"
+              </component>
+            </component>
         </template>
     </el-table-column>
 </template>
@@ -47,10 +50,7 @@ export default{
   },
   methods: {
     renderTemplate(template){
-      const compile = Vue.compile(template);
-      console.info(this.$options.render)
-      console.info(this.$options.template)
-      return compile.render
+      return Vue.compile(template);
     },
     compile () {
         if (this.column.render) {

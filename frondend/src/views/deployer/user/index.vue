@@ -8,6 +8,7 @@
       :paginations="paginations"
       :events="events"
       :height="20"
+      @ccc="cccHandler"
     >
     </c-data-grid>
     <!-- <c-data-grid></c-data-grid> -->
@@ -46,7 +47,7 @@ export default {
         {prop: 'id', label: 'ID', sortable: 'custom', fixed: true},
         {prop: 'create_id', label: '创建人ID', value: '<div>123456</div>'},
         {prop: 'name', label: '名字', sortable: true, render: (value, index, row) => {
-          return '<el-button type="success">'+value+'</el-button>'
+          return `<el-button type="success" @click="$emit('ccc')">${value}</el-button>`
         }},
         {prop: 'email', label: '邮箱', noDisplay: true, value: (value, index, row) => {
           return parseTime(new Date().getTime())
@@ -62,6 +63,9 @@ export default {
     }
   },
   methods: {
+    cccHandler(){
+      alert(111)
+    },
     getSearchQuery(query){
       return Object.assign(query, {
           sex: 'sex',
