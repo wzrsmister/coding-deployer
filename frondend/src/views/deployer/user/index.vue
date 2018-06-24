@@ -47,13 +47,14 @@ export default {
         {prop: 'id', label: 'ID', sortable: 'custom', fixed: true},
         {prop: 'create_id', label: '创建人ID', value: '<div>123456</div>'},
         {prop: 'name', label: '名字', sortable: true, render: (value, index, row) => {
+          //console.info(value)
           return `<el-button type="success" @click="$emit('ccc')">${value}</el-button>`
         }},
         {prop: 'email', label: '邮箱', noDisplay: true, value: (value, index, row) => {
           return parseTime(new Date().getTime())
         }},
-        {prop: 'status', label: '状态', template: `status: {{$value}}, index: {{$index}}`},
-        {prop: 'created_at', label: '创建时间', template: '123{{$row.created_at}}'},
+        {prop: 'status', label: '状态', template: `status: {{$attrs.value}}, index: {{$attrs.index}}`},
+        {prop: 'created_at', label: '创建时间', template: '123{{$attrs.row.created_at}}'},
         {prop: 'login_at', label: '最后登陆'},
         {prop: 'updated_at', label: '最后更新'},
         {prop: 'deleted_at', label: '删除时间'},
@@ -64,7 +65,7 @@ export default {
   },
   methods: {
     cccHandler(){
-      alert(111)
+      console.info(111)
     },
     getSearchQuery(query){
       return Object.assign(query, {

@@ -5,16 +5,29 @@
             <template v-if="$attrs.value">
               {{ 
                 typeof $attrs.value == 'function' ? 
-                $attrs.value(scope.row[$attrs.prop], scope.$index, scope.row) : 
-                $attrs.value 
+                $attrs.value(scope.row[$attrs.prop], scope.$index, scope.row) : $attrs.value 
               }}
             </template>
             <component 
               v-else-if="$attrs.render" 
-              :is="renderTemplate($attrs.render(scope.row[$attrs.prop], scope.$index, scope.row))">
+              :is="renderTemplate($attrs.render(scope.row[$attrs.prop], scope.$index, scope.row))"
               v-on="$listeners"
-              </component>
-            </component>
+            ></component>
+            <component 
+              v-else-if="$attrs.component" 
+              :is="renderTemplate($attrs.component)"
+              v-on="$listeners"
+            ></component>
+            <component 
+              v-else-if="$attrs.template" 
+              :is="renderTemplate($attrs.template)"
+              :index="scope.$index"
+              :value="scope.row[$attrs.prop]"
+              :scope="scope"
+              :row="scope.row"
+              :column="scope.column"
+              v-on="$listeners"
+            ></component>
         </template>
     </el-table-column>
 </template>
@@ -37,10 +50,10 @@ export default{
   computed: {
     noTemplate: function () {
       return !this.$attrs.hasOwnProperty("value") 
-      &&     !this.$attrs.hasOwnProperty("render") 
-      &&     !this.$attrs.hasOwnProperty("component") 
-      &&     !this.$attrs.hasOwnProperty("template") 
-      &&     !this.$attrs.hasOwnProperty("html") 
+          && !this.$attrs.hasOwnProperty("render") 
+          && !this.$attrs.hasOwnProperty("component") 
+          && !this.$attrs.hasOwnProperty("template") 
+          && !this.$attrs.hasOwnProperty("html") 
     }
   },
   render: function (createElement) {

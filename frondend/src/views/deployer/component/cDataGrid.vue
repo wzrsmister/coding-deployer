@@ -55,6 +55,7 @@ export default {
             tableData: [],
         }
     },
+    //created() {
     mounted() {
         this.fetchData()
     },
