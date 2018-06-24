@@ -11,8 +11,8 @@
             <slot :name="column.prop" v-bind="props"></slot>
         </template> -->
 
-        <template :slot="column.prop" v-for="(column,key) in columns">
-            <slot :name="column.prop"></slot>
+        <template :slot="column.prop" v-for="(column,key) in columns" slot-scope="scope">
+            <slot :name="column.prop" v-bind="scope"></slot>
         </template>
         
         <!-- <template slot="name" >

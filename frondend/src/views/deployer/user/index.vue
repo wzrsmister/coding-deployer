@@ -11,8 +11,8 @@
       @ccc="cccHandler"
     >
 
-      <template slot="name">
-          <el-button size="mini">111</el-button>
+      <template slot="name" slot-scope="{ row }">
+          <el-button size="mini">{{ row.name }}</el-button>
       </template>
 
     </c-data-grid>

@@ -2,7 +2,7 @@
     <el-table-column v-if="noTemplate" v-bind="$attrs"></el-table-column>
     <el-table-column v-else v-bind="$attrs" v-on="$listeners">
         <template slot-scope="scope">
-            <slot>
+            <slot v-bind="scope">
               <template v-if="$attrs.value">
                 {{ 
                   typeof $attrs.value == 'function' ? 

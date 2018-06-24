@@ -38,8 +38,8 @@
         </slot>
       </template> -->
 
-      <template>
-          <slot :name="column.prop"></slot>
+      <template slot-scope="scope">
+          <slot :name="column.prop" v-bind="scope"></slot>
       </template>
 
       <!-- <template slot="name" >
