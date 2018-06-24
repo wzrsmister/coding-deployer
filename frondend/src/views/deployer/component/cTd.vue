@@ -2,32 +2,34 @@
     <el-table-column v-if="noTemplate" v-bind="$attrs"></el-table-column>
     <el-table-column v-else v-bind="$attrs" v-on="$listeners">
         <template slot-scope="scope">
-            <template v-if="$attrs.value">
-              {{ 
-                typeof $attrs.value == 'function' ? 
-                $attrs.value(scope.row[$attrs.prop], scope.$index, scope.row) : $attrs.value 
-              }}
-            </template>
-            <component 
-              v-else-if="$attrs.render" 
-              :is="renderTemplate($attrs.render(scope.row[$attrs.prop], scope.$index, scope.row))"
-              v-on="$listeners"
-            ></component>
-            <component 
-              v-else-if="$attrs.component" 
-              :is="renderTemplate($attrs.component)"
-              v-on="$listeners"
-            ></component>
-            <component 
-              v-else-if="$attrs.template" 
-              :is="renderTemplate($attrs.template)"
-              :index="scope.$index"
-              :value="scope.row[$attrs.prop]"
-              :scope="scope"
-              :row="scope.row"
-              :column="scope.column"
-              v-on="$listeners"
-            ></component>
+            <slot>
+              <template v-if="$attrs.value">
+                {{ 
+                  typeof $attrs.value == 'function' ? 
+                  $attrs.value(scope.row[$attrs.prop], scope.$index, scope.row) : $attrs.value 
+                }}
+              </template>
+              <component 
+                v-else-if="$attrs.render" 
+                :is="renderTemplate($attrs.render(scope.row[$attrs.prop], scope.$index, scope.row))"
+                v-on="$listeners"
+              ></component>
+              <component 
+                v-else-if="$attrs.component" 
+                :is="renderTemplate($attrs.component)"
+                v-on="$listeners"
+              ></component>
+              <component 
+                v-else-if="$attrs.template" 
+                :is="renderTemplate($attrs.template)"
+                :index="scope.$index"
+                :value="scope.row[$attrs.prop]"
+                :scope="scope"
+                :row="scope.row"
+                :column="scope.column"
+                v-on="$listeners"
+              ></component>
+            </slot>
         </template>
     </el-table-column>
 </template>

@@ -7,9 +7,18 @@
       v-on="$listeners"
       @sort-change="mSortChangeHandler"
       >
-        <!-- <template slot="table-body">
-            <slot name="table-body"></slot>
+        <!-- <template :slot="typeof $scopedSlots[column.prop] !== 'undefined' ? column.prop : ''" slot-scope="props"  v-for="(column,key) in columns" v-bind="column">
+            <slot :name="column.prop" v-bind="props"></slot>
         </template> -->
+
+        <template :slot="column.prop" v-for="(column,key) in columns">
+            <slot :name="column.prop"></slot>
+        </template>
+        
+        <!-- <template slot="name" >
+            <slot name="name"></slot>
+        </template> -->
+    
     </c-table>
     <c-pagination 
       v-bind="mPaginations" 

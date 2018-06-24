@@ -10,8 +10,12 @@
       :height="20"
       @ccc="cccHandler"
     >
+
+      <template slot="name">
+          <el-button size="mini">111</el-button>
+      </template>
+
     </c-data-grid>
-    <!-- <c-data-grid></c-data-grid> -->
   </div>
 </template>
 

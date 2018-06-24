@@ -30,13 +30,21 @@
     :index="key"
     v-on="$listeners"
     >
-      <template v-if="typeof $scopedSlots[column.prop] !== 'undefined'">
+      <!-- <template :slot="column.prop" v-if="typeof $scopedSlots[column.prop] !== 'undefined'">
         <slot
           :name="column.prop"
           v-bind="$attrs"
           >
         </slot>
+      </template> -->
+
+      <template>
+          <slot :name="column.prop"></slot>
       </template>
+
+      <!-- <template slot="name" >
+        <slot name="name"></slot>
+      </template> -->
   </c-td>
   <!-- <el-table-column 
     v-if="item.type == 'selection'"
