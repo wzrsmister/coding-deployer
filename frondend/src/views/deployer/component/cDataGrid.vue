@@ -11,6 +11,10 @@
             <slot :name="column.prop" v-bind="props"></slot>
         </template> -->
 
+        <template slot="tableBody" v-if="typeof $scopedSlots['tableBody'] === 'undefined'">
+            <slot name="tableBody"></slot>
+        </template>
+
         <template 
           :slot="typeof $scopedSlots[column.prop] !== 'undefined' ? column.prop : ''" 
           v-for="(column,key) in columns"

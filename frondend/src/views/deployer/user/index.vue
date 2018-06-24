@@ -10,10 +10,16 @@
       :height="20"
       @ccc="cccHandler"
     >
+      <!-- <template slot="tableBody">
+        <c-td key="id"  prop="id" label="ID" ></c-td>
+        <c-td key="name" prop="name" label="ID" >
+            <el-button size="mini" slot-scope="scope">{{ scope.row.name }}</el-button>
+        </c-td>
+      </template> -->
 
-      <template slot="name" slot-scope="{ row }">
+      <!-- <template slot="name" slot-scope="{ row }">
           <el-button size="mini">{{ row.name }}</el-button>
-      </template>
+      </template> -->
 
     </c-data-grid>
   </div>
@@ -23,10 +29,11 @@
 <script>
 import { createElement } from 'vue'
 import cDataGrid from '../component/cDataGrid'
+import cTd from '../component/cTd'
 import { getList } from '@/api/user'
 import { parseTime } from '@/utils/index'
 export default {
-  components: { cDataGrid },
+  components: { cDataGrid, cTd },
   data() {
     return {
       paginations: {},

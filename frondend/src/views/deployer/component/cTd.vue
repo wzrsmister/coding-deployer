@@ -51,7 +51,9 @@ export default{
   },
   computed: {
     noTemplate: function () {
-      return !this.$attrs.hasOwnProperty("value") 
+      return !this.$slots.default
+          && Object.keys(this.$scopedSlots).length == 0
+          && !this.$attrs.hasOwnProperty("value") 
           && !this.$attrs.hasOwnProperty("render") 
           && !this.$attrs.hasOwnProperty("component") 
           && !this.$attrs.hasOwnProperty("template") 

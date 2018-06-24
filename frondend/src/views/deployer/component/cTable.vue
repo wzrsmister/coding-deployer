@@ -21,7 +21,7 @@
   element-loading-text="拼命加载中" 
   v-on="$listeners"
 >
-<slot name="table-body">
+<slot name="tableBody">
   <c-td 
     v-if="!column.noDisplay" 
     v-for="(column, key) in columnsList" 
