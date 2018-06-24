@@ -11,7 +11,11 @@
             <slot :name="column.prop" v-bind="props"></slot>
         </template> -->
 
-        <template :slot="column.prop" v-for="(column,key) in columns" slot-scope="scope">
+        <template 
+          :slot="typeof $scopedSlots[column.prop] !== 'undefined' ? column.prop : ''" 
+          v-for="(column,key) in columns"
+          slot-scope="scope"
+        >
             <slot :name="column.prop" v-bind="scope"></slot>
         </template>
         

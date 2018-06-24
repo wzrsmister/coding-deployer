@@ -38,7 +38,7 @@
         </slot>
       </template> -->
 
-      <template slot-scope="scope">
+      <template v-if="typeof $scopedSlots[column.prop] !== 'undefined'" slot-scope="scope">
           <slot :name="column.prop" v-bind="scope"></slot>
       </template>
 
