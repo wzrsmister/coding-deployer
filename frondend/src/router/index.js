@@ -77,6 +77,19 @@ export const asyncRouterMap = [
     }]
   },
   {
+    path: '/user2',
+    component: Layout,
+    redirect: '/user2/index',
+    alwaysShow: true,
+    meta: { title: '用户2', icon: 'zip' },
+    children: [{ 
+      path: 'index', 
+      component: _import('deployer/user2/index'), 
+      name: '用户列表2', 
+      meta: { title: '用户列表2' }
+    }]
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/index',
