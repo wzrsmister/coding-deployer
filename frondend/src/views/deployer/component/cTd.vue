@@ -9,6 +9,9 @@
                   $attrs.value(scope.row[$attrs.prop], scope.$index, scope.row) : $attrs.value 
                 }}
               </template>
+
+              <!-- <c-v-node v-else-if="$attrs.node" :node="$attrs.node"></c-v-node> -->
+
               <component 
                 v-else-if="$attrs.render" 
                 :is="renderTemplate($attrs.render(scope.row[$attrs.prop], scope.$index, scope.row))"
@@ -36,9 +39,11 @@
 
 <script>
 import Vue from 'vue'
+import CVNode from './cVNode'
 
 export default{
   name: 'cTd',
+  components: { CVNode },
   props:{
     index: {}
   },
@@ -61,9 +66,16 @@ export default{
     }
   },
   render: function (createElement) {
-
+    console.info("createElement")
   },
   created() {
+    /*this.createElement((h) => {
+      console.info(h)
+      return h(this.$attrs.vNode)
+    })*/
+  },
+  createElement(){
+    console.info(12313)
   },
   methods: {
     renderTemplate(template){

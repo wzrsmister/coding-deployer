@@ -5,19 +5,20 @@
       :listLoading="listLoading"
       v-bind="$props"
       v-on="$listeners"
+      :columns="mColumns"
       @sort-change="mSortChangeHandler"
       >
         <!-- <template :slot="typeof $scopedSlots[column.prop] !== 'undefined' ? column.prop : ''" slot-scope="props"  v-for="(column,key) in columns" v-bind="column">
             <slot :name="column.prop" v-bind="props"></slot>
         </template> -->
 
-        <template slot="tableBody" v-if="typeof $scopedSlots['tableBody'] === 'undefined'">
+        <!--<template slot="tableBody" v-if="typeof $scopedSlots['tableBody'] === 'undefined'"> -->
             <slot name="tableBody"></slot>
-        </template>
+        <!--</template>-->
 
         <template 
           :slot="typeof $scopedSlots[column.prop] !== 'undefined' ? column.prop : ''" 
-          v-for="(column,key) in columns"
+          v-for="(column,key) in mColumns"
           slot-scope="scope"
         >
             <slot :name="column.prop" v-bind="scope"></slot>
@@ -52,7 +53,7 @@ export default {
             default: {}
         },
         columns: {
-            default: {}
+            default: () => []
         },
         dataLoadHandler: {
 
@@ -70,10 +71,25 @@ export default {
             sort: '',
             listLoading: false,
             tableData: [],
+            attrColumns: []
         }
     },
     //created() {
     mounted() {
+        console.info(this)
+        if(this.$slots.hasOwnProperty("tableBody")){
+            this.$slots.tableBody.map((slot, index) => {
+                if(slot.data != undefined && slot.data.hasOwnProperty("attrs")){
+                    let column = slot.data.attrs
+                    column.node = slot
+                    this.attrColumns.push(column)
+                }
+            })
+        }
+        console.info(this.$children[0].$slots)
+        this.$children[0].$slots.tableBody = this.attrColumns
+        this.$children[0].$slots.default = []
+        console.info(this.$children[0].$slots)
         this.fetchData()
     },
     computed: {
@@ -84,6 +100,9 @@ export default {
                 currentPage: 1,
                 pageSize: 2,        
             }, this.$props.paginations)
+        },
+        mColumns: function(){
+            return this.columns.concat(this.attrColumns)
         },
         mSortChangeHandler: function(){
             if(this.$props.sortChangeHandler !== undefined){

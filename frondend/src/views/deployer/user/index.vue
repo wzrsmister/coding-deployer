@@ -4,18 +4,17 @@
       :dataLoadHandler="dataLoadHandler" 
       :searchQueryHandler="searchQueryHandler" 
       :formatRowData="formatRowData" 
-      :columns="columns"
       :paginations="paginations"
       :events="events"
       :height="20"
       @ccc="cccHandler"
     >
-      <!-- <template slot="tableBody">
+      <template slot="tableBody">
         <c-td key="id"  prop="id" label="ID" ></c-td>
-        <c-td key="name" prop="name" label="ID" >
+        <c-td key="name" prop="name" label="Name" >
             <el-button size="mini" slot-scope="scope">{{ scope.row.name }}</el-button>
         </c-td>
-      </template> -->
+      </template>
 
       <!-- <template slot="name" slot-scope="{ row }">
           <el-button size="mini">{{ row.name }}</el-button>

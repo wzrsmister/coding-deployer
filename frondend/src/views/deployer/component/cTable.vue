@@ -104,7 +104,8 @@ export default{
     events: {},
     columns: {
         default: []
-    }
+    },
+    mColumns: []
  },
  data(){
     return {
@@ -112,6 +113,8 @@ export default{
     }
  },
  mounted(){
+    //this.$slots.tableBody = this.$slots.default
+    //console.info(this.$slots)
     const setting = true;
     this.$props.columns.forEach((column)=>{
         if(column.hasOwnProperty('component')){
