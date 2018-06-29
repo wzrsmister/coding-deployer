@@ -10,6 +10,9 @@
       @ccc="cccHandler"
     >
       <template slot="tableBody">
+        <c-td type="selection"></c-td>
+        <c-td type="expand" label="Expand"></c-td>
+        <c-td type="index" ></c-td>
         <c-td key="id"  prop="id" label="ID" ></c-td>
         <c-td key="name" prop="name" label="Name" >
             <el-button size="mini" slot-scope="scope">{{ scope.row.name }}</el-button>

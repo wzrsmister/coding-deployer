@@ -23,6 +23,15 @@
         >
             <slot :name="column.prop" v-bind="scope"></slot>
         </template>
+
+        <template 
+          :slot="column.prop" 
+          v-for="(column,key) in mColumns"
+          slot-scope="scope"
+        >
+            <slot :name="column.unique" v-bind="scope"></slot>
+            {{ renderTemplate($createElement, column) }}
+        </template>
         
         <!-- <template slot="name" >
             <slot name="name"></slot>
@@ -76,20 +85,29 @@ export default {
     },
     //created() {
     mounted() {
-        console.info(this)
+        console.info(this.$slots.tableBody)
         if(this.$slots.hasOwnProperty("tableBody")){
             this.$slots.tableBody.map((slot, index) => {
                 if(slot.data != undefined && slot.data.hasOwnProperty("attrs")){
                     let column = slot.data.attrs
                     column.node = slot
+                    column.unique = "slot_ctd_" + index 
+                    console.info(column)
+                    this.$slots[column.unique] = column
                     this.attrColumns.push(column)
                 }
+                /*if(slot.data != undefined && slot.data.hasOwnProperty("attrs")){
+                    let column = slot.data.attrs
+                    column.node = slot
+                    this.attrColumns.push(column)
+                }*/
             })
+            this.$children[0].$slots.tableBody = this.$slots.tableBody
         }
-        console.info(this.$children[0].$slots)
+        /*console.info(this.$children[0].$slots)
         this.$children[0].$slots.tableBody = this.attrColumns
         this.$children[0].$slots.default = []
-        console.info(this.$children[0].$slots)
+        console.info(this.$children[0].$slots)*/
         this.fetchData()
     },
     computed: {
@@ -120,6 +138,14 @@ export default {
         }
     },
     methods: {
+        renderTemplate(h, slot){
+            if(!this.$slots.hasOwnProperty[slot.unique]){
+                this.$slots[slot.unique] = slot.node
+            }
+            //this.$slots[slot.data.attrs.prop] = h('div', 111)
+            //return h('<div>', [123])
+            //console.info(h, column)
+        },
         getDefaultSearchQuery(){
             return {
                 sort: this.sort,
