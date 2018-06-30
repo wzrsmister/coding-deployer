@@ -38,8 +38,8 @@
         </slot>
       </template> -->
 
-      <template v-if="typeof $scopedSlots[column.prop] !== 'undefined'" slot-scope="scope">
-          <slot :name="column.prop" v-bind="scope"></slot>
+      <template v-if="typeof $scopedSlots[column.unique] !== 'undefined'" slot-scope="scope">
+          <slot :name="column.unique" v-bind="scope"></slot>
       </template>
 
       <!-- <template slot="name" >

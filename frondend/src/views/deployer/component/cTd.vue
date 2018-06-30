@@ -1,5 +1,11 @@
 <template>
-    <el-table-column v-if="noTemplate" v-bind="$attrs"></el-table-column>
+    <el-table-column v-bind="$attrs" v-if="$scopedSlots.default != undefined">
+      <template slot-scope="scope">
+        <slot v-bind="scope"></slot>
+      </template>
+    </el-table-column>
+    <el-table-column v-else v-bind="$attrs"></el-table-column>
+    <!-- <el-table-column v-if="noTemplate" v-bind="$attrs"></el-table-column>
     <el-table-column v-else v-bind="$attrs" v-on="$listeners">
         <template slot-scope="scope">
             <slot v-bind="scope">
@@ -9,9 +15,7 @@
                   $attrs.value(scope.row[$attrs.prop], scope.$index, scope.row) : $attrs.value 
                 }}
               </template>
-
-              <!-- <c-v-node v-else-if="$attrs.node" :node="$attrs.node"></c-v-node> -->
-
+    
               <component 
                 v-else-if="$attrs.render" 
                 :is="renderTemplate($attrs.render(scope.row[$attrs.prop], scope.$index, scope.row))"
@@ -34,7 +38,7 @@
               ></component>
             </slot>
         </template>
-    </el-table-column>
+    </el-table-column> -->
 </template>
 
 <script>
@@ -52,7 +56,7 @@ export default{
     }
   },
   mounted(){
-    
+    console.info(this)
   },
   computed: {
     noTemplate: function () {

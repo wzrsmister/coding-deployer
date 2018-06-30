@@ -11,11 +11,11 @@
     >
       <template slot="tableBody">
         <c-td type="selection"></c-td>
-        <c-td type="expand" label="Expand"></c-td>
-        <c-td type="index" ></c-td>
+        <c-td key="expand" type="expand" label="Expand"></c-td>
+        <c-td key="index" type="index" ></c-td>
         <c-td key="id"  prop="id" label="ID" ></c-td>
         <c-td key="name" prop="name" label="Name" >
-            <el-button size="mini" slot-scope="scope">{{ scope.row.name }}</el-button>
+            <el-button @click="cccHandler" size="mini" slot-scope="scope">{{ scope.row.name }}</el-button>
         </c-td>
       </template>
 
@@ -32,7 +32,7 @@
 import { createElement } from 'vue'
 import cDataGrid from '../component/cDataGrid'
 import cTd from '../component/cTd'
-import { getList } from '@/api/user'
+import { getList } from '@/api/test'
 import { parseTime } from '@/utils/index'
 export default {
   components: { cDataGrid, cTd },

@@ -28,7 +28,7 @@
 <script>
 import { createElement } from 'vue'
 import cDataGrid from '../component2/cDataGrid'
-import { getList } from '@/api/user'
+import { getList } from '@/api/test'
 import { parseTime } from '@/utils/index'
 export default {
   components: { cDataGrid },
